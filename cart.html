@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1>Your Cart</h1>
+    <div class="row" id="cartItems">
+        <!-- Cart items will be injected here -->
+    </div>
+    <button class="btn btn-success mt-4" onclick="buyNow()">Buy Now</button>
+</div>
+
+<script>
+    // Function to display cart items from localStorage
+    function displayCart() {
+        const cartContainer = document.getElementById('cartItems');
+        cartContainer.innerHTML = ''; // Clear current cart items
+        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        cartItems.forEach((item, index) => {
+            const cartItem = `
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="${item.img}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text">Price: ₹${item.price}</p>
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-secondary btn-sm mr-2" onclick="changeQuantity(${index}, -1)">-</button>
+                                <span id="quantity-${index}">${item.quantity || 1}</span>
+                                <button class="btn btn-secondary btn-sm ml-2" onclick="changeQuantity(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            cartContainer.innerHTML += cartItem;
+        });
+    }
+
+    // Function to change quantity of a cart item
+    function changeQuantity(index, change) {
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        cartItems[index].quantity = (cartItems[index].quantity || 1) + change;
+        if (cartItems[index].quantity < 1) {
+            cartItems[index].quantity = 1; // Ensure quantity doesn't go below 1
+        }
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        displayCart(); // Refresh the cart display
+    }
+
+    // Function to handle "Buy Now" button click
+    function buyNow() {
+        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        if (cartItems.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        // Here you would handle the checkout process, e.g., sending the cart data to a server
+        alert("Proceeding to checkout!");
+
+        // For now, let's just clear the cart
+        localStorage.removeItem('cartItems');
+        displayCart();
+    }
+
+     // Function to handle "Buy Now" button click
+function buyNow() {
+    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    if (cartItems.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    // Redirect to order page
+    window.location.href = 'order.html';
+}
+
+    // Display cart items on page load
+    displayCart();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1>Order Confirmation</h1>
+    <h2>Review Your Order</h2>
+    <div class="row" id="orderItems">
+        <!-- Order items will be injected here -->
+    </div>
+
+    <h2 class="mt-5">Shipping Address</h2>
+    <div class="form-group">
+        <label for="fullName">Full Name:</label>
+        <input type="text" class="form-control" id="fullName" placeholder="Enter your full name">
+    </div>
+    <div class="form-group">
+        <label for="addressLine1">Address Line 1:</label>
+        <input type="text" class="form-control" id="addressLine1" placeholder="Enter your address">
+    </div>
+    <div class="form-group">
+        <label for="addressLine2">Address Line 2:</label>
+        <input type="text" class="form-control" id="addressLine2" placeholder="Apartment, suite, etc. (optional)">
+    </div>
+    <div class="form-group">
+        <label for="city">City:</label>
+        <input type="text" class="form-control" id="city" placeholder="Enter your city">
+    </div>
+    <div class="form-group">
+        <label for="state">State:</label>
+        <input type="text" class="form-control" id="state" placeholder="Enter your state">
+    </div>
+    <div class="form-group">
+        <label for="zipCode">Zip Code:</label>
+        <input type="text" class="form-control" id="zipCode" placeholder="Enter your zip code">
+    </div>
+    <div class="form-group">
+        <label for="country">Country:</label>
+        <input type="text" class="form-control" id="country" placeholder="Enter your country">
+    </div>
+    <div class="form-group">
+        <label for="country">mobile number:</label>
+        <input type="text" class="form-control" id="MobileNumber" placeholder="Enter your Mobile Number">
+    </div>
+    
+    <h2 class="mt-5">Choose Payment Method</h2>
+    <div class="form-group">
+        <label for="paymentMethod">Select Payment Method:</label>
+        <select class="form-control" id="paymentMethod">
+            <option value="upi">UPI Transaction</option>
+            <option value="cod">Cash on Delivery</option>
+            <option value="card">Credit/Debit Card</option>
+            <option value="netbanking">Net Banking</option>
+        </select>
+    </div>
+
+    <button class="btn btn-success mt-4" onclick="placeOrder()">Place Order</button>
+</div>
+
+<script>
+    // Function to display order items from localStorage
+    function displayOrder() {
+        const orderContainer = document.getElementById('orderItems');
+        orderContainer.innerHTML = ''; // Clear current order items
+        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        let totalCost = 0;
+
+        cartItems.forEach(item => {
+            totalCost += item.price * (item.quantity || 1);
+
+            const orderItem = `
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="${item.img}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text">Price: ₹${item.price}</p>
+                            <p class="card-text">Quantity: ${item.quantity || 1}</p>
+                        </div>
+                    </div>
+                </div>`;
+            orderContainer.innerHTML += orderItem;
+        });
+
+        // Display the total cost
+        const totalCostElement = `
+            <div class="col-md-12 mt-4">
+                <h3>Total Cost: ₹${totalCost.toFixed(2)}</h3>
+            </div>`;
+        orderContainer.innerHTML += totalCostElement;
+    }
+
+    // Function to handle order placement
+    function placeOrder() {
+        const fullName = document.getElementById('fullName').value;
+        const addressLine1 = document.getElementById('addressLine1').value;
+        const addressLine2 = document.getElementById('addressLine2').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const zipCode = document.getElementById('zipCode').value;
+        const country = document.getElementById('country').value;
+        const MobileNumber = document.getElementById('MobileNumber').value;
+        const paymentMethod = document.getElementById('paymentMethod').value;
+
+        // Validate the shipping address before placing the order
+        if (!fullName || !addressLine1 || !city || !state || !zipCode || !country || !MobileNumber) {
+            alert('Please fill out all required shipping address fields.');
+            return;
+        }
+
+        alert(`Your order has been placed using ${paymentMethod}. Your order will be shipped to ${addressLine1}, ${city}, ${state}, ${zipCode}, ${country}.`);
+
+        // Clear the cart after placing the order
+        localStorage.removeItem('cartItems');
+
+        // Redirect to a confirmation or thank you page
+        window.location.href = 'thankyou.html';
+    }
+
+    // Display order items on page load
+    displayOrder();
+</script>
+
+</body>
+</html>
